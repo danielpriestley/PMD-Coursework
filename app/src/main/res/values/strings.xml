@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">TankWars2</string>
+    <string name="shoot_text">FIRE!</string>
+
+</resources>
