@@ -38,11 +38,33 @@ public class TankWarView extends SurfaceView implements Runnable {
     Bitmap shell;
     public static float screenRatioX, screenRatioY;
 
+    // shoot buttons
     private float shootButtonLength = 300;
     private float shootButtonHeight = 300;
     private int shootButtonX = 750;
     private int shootButtonY = 1230;
     private boolean shootButtonClicked = false;
+
+    // control buttons
+    private Bitmap controlUp;
+    private Bitmap controlDown;
+    private Bitmap controlLeft;
+    private Bitmap controlRight;
+    private float controlButtonLength = 100;
+    private float controlButtonHeight = 100;
+    // UP BUTTON
+    private int controlUpX = 150;
+    private int controlUpY = 1200;
+    // DOWN BUTTON
+    private int controlDownX = 150;
+    private int controlDownY = 1400;
+    // LEFT BUTTON
+    private int controlLeftX = 40;
+    private int controlLeftY = 1300;
+    // RIGHT BUTTON
+    private int controlRightX = 260;
+    private int controlRightY = 1300;
+
 
     private List<Missile> missiles;
 
@@ -211,6 +233,15 @@ public class TankWarView extends SurfaceView implements Runnable {
             shootButton = BitmapFactory.decodeResource(context.getResources(), R.drawable.testpng);
             shootButton = Bitmap.createScaledBitmap(shootButton, (int) (shootButtonLength), (int) (shootButtonHeight), false);
 
+            // control buttons
+            controlUp = BitmapFactory.decodeResource(context.getResources(), R.drawable.controlup);
+            controlUp = Bitmap.createScaledBitmap(controlUp, (int) (controlButtonLength), (int) (controlButtonHeight), false);
+            controlDown = BitmapFactory.decodeResource(context.getResources(), R.drawable.controldown);
+            controlDown = Bitmap.createScaledBitmap(controlDown, (int) (controlButtonLength), (int) (controlButtonHeight), false);
+            controlLeft = BitmapFactory.decodeResource(context.getResources(), R.drawable.controlleft);
+            controlLeft = Bitmap.createScaledBitmap(controlLeft, (int) (controlButtonLength), (int) (controlButtonHeight), false);
+            controlRight = BitmapFactory.decodeResource(context.getResources(), R.drawable.conrolright);
+            controlRight = Bitmap.createScaledBitmap(controlRight, (int) (controlButtonLength), (int) (controlButtonHeight), false);
             canvas = ourHolder.lockCanvas();
             canvas.drawBitmap(background1.background, background1.x, background1.y, paint);
             canvas.drawBitmap(background2.background, background2.x, background2.y, paint);
@@ -221,6 +252,12 @@ public class TankWarView extends SurfaceView implements Runnable {
             paint.setColor(Color.argb(255, 249, 129, 0));
             paint.setTextSize(40);
             canvas.drawText("Score: " + score + "   Lives: " + lives, 10, 50, paint);
+
+            // control buttons
+            canvas.drawBitmap(controlUp, controlUpX, controlUpY, paint);
+            canvas.drawBitmap(controlDown, controlDownX, controlDownY, paint);
+            canvas.drawBitmap(controlLeft, controlLeftX, controlLeftY, paint);
+            canvas.drawBitmap(controlRight, controlRightX, controlRightY, paint);
 
             if (bullet.getStatus()) {
                 canvas.drawRect(bullet.getRect(), paint);
@@ -281,11 +318,42 @@ public class TankWarView extends SurfaceView implements Runnable {
                 }
 
                 // if the tap's X value is MORE than HALF of the screens X value
-                if (event.getX() > screenX / 2 && !shootButtonClicked) {
-                    tank.setMovementState((tank.RIGHT));
-                } else if (event.getX() < screenX / 2 && !shootButtonClicked) {
+//                if (event.getX() > screenX / 2 && !shootButtonClicked) {
+//                    tank.setMovementState((tank.RIGHT));
+//                } else if (event.getX() < screenX / 2 && !shootButtonClicked) {
+//                    tank.setMovementState(tank.LEFT);}
+
+                    // This isn't running because the above code is still running regardless
+                    // gonna try and implement button movement
+
+                // CODE FOR CONTROL BUTTONS
+
+                // UP BUTTON
+                if (x > controlUpX && x < controlUpX + controlButtonLength &&
+                        y > controlUpY && y < controlUpY + controlButtonHeight) {
+                    // tank moves up when button clicked
+                    tank.setMovementState(tank.UP);
+                }
+                // DOWN BUTTON
+                if (x > controlDownX && x < controlDownX + controlButtonLength &&
+                        y > controlDownY && y < controlDownY + controlButtonHeight) {
+                    // tank moves up when button clicked
+                    tank.setMovementState(tank.DOWN);
+                }
+                // LEFT BUTTON
+                if (x > controlLeftX && x < controlLeftX + controlButtonLength &&
+                        y > controlLeftY && y < controlLeftY + controlButtonHeight) {
+                    // tank moves up when button clicked
                     tank.setMovementState(tank.LEFT);
                 }
+                // RIGHT BUTTON
+                if (x > controlRightX && x < controlRightX + controlButtonLength &&
+                        y > controlRightY && y < controlRightY + controlButtonHeight) {
+                    // tank moves up when button clicked
+                    tank.setMovementState(tank.RIGHT);
+                }
+
+
 
 
                 break;
