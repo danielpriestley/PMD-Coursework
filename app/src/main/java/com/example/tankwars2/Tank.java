@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.graphics.RectF;
 
 import static com.example.tankwars2.TankWarView.screenRatioX;
@@ -42,6 +43,8 @@ public class Tank {
     ///maybe more movement than this
     private int tankMoving;
     private int tankSpeed;
+    private Bitmap tankHit;
+
 
     private TankWarView tankWarView;
 
@@ -97,6 +100,9 @@ public class Tank {
         shoot3 = Bitmap.createScaledBitmap(shoot3, (int) length, (int) height, false);
         shoot4 = Bitmap.createScaledBitmap(shoot4, (int) length, (int) height, false);
         shoot5 = Bitmap.createScaledBitmap(shoot5, (int) length, (int) height, false);
+
+        tankHit = BitmapFactory.decodeResource(res, R.drawable.controlup);
+        tankHit = Bitmap.createScaledBitmap(tankHit, length, height, false );
 
 
 //        currentBitmap = getBitmap();
@@ -172,6 +178,14 @@ public class Tank {
             return shoot5;
         }
         return bitmap;
+    }
+
+    Rect getCollisionShape () {
+        return new Rect((int) x, (int) y, (int) x + length, (int) y + height);
+    }
+
+    Bitmap tankHit () {
+        return tankHit;
     }
 
     public float getX() {

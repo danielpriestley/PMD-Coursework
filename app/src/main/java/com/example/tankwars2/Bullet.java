@@ -1,4 +1,5 @@
 package com.example.tankwars2;
+import android.graphics.Rect;
 import android.graphics.RectF;
 
 public class Bullet {
@@ -106,6 +107,10 @@ public class Bullet {
 
         return x;}
     //
+
+    Rect getCollisionShape () {
+        return new Rect((int) x, (int) y, (int) x + width, (int) y + height);
+    }
 
 
 

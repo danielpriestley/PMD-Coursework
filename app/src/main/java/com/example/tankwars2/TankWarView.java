@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -27,6 +28,7 @@ import android.widget.FrameLayout;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class TankWarView extends SurfaceView implements Runnable {
 
@@ -35,6 +37,7 @@ public class TankWarView extends SurfaceView implements Runnable {
     private Bullet bullet;
     private boolean missileFired;
     private Bitmap shootButton;
+    private boolean isTankHit = false;
     Bitmap shell;
     public static float screenRatioX, screenRatioY;
 
@@ -64,6 +67,11 @@ public class TankWarView extends SurfaceView implements Runnable {
     // RIGHT BUTTON
     private int controlRightX = 260;
     private int controlRightY = 1300;
+
+    // ALIENS
+    private Alien[] aliens;
+    private Random random;
+    private Bitmap alienDog;
 
 
     private List<Missile> missiles;
@@ -101,6 +109,16 @@ public class TankWarView extends SurfaceView implements Runnable {
         screenRatioX = 1920f / screenX;
         screenRatioY = 1080f / screenY;
 
+        // alien code
+        aliens = new Alien[7];
+//        aliens = new Alien();
+        for (int i = 0; i < 7; i++) {
+            Alien alien = new Alien(getResources());
+            aliens[i] = alien;
+        }
+
+        random = new Random();
+
 
         missiles = new ArrayList<>();
 
@@ -121,7 +139,7 @@ public class TankWarView extends SurfaceView implements Runnable {
         missile.x = (int) (tank.getX() + (tank.getLength() / 4));
         missile.y = (int) (tank.getY() - (tank.getHeight() / 2));
         // score for testing purposes to ensure this runs
-        score = score + 10;
+//        score = score + 10;
         // adds the newly created missile to the missiles ArrayList
         missiles.add(missile);
     }
@@ -158,6 +176,10 @@ public class TankWarView extends SurfaceView implements Runnable {
         if (tank.x >= screenX - tank.getLength()) {
             tank.x = screenX - tank.getLength();
         }
+
+        // missile collision code
+
+
     }
 
 
@@ -185,7 +207,7 @@ public class TankWarView extends SurfaceView implements Runnable {
         tank.update(fps);
 
 
-
+        // Missile code
         List<Missile> trash = new ArrayList<>();
 
         for (Missile missile : missiles) {
@@ -194,10 +216,55 @@ public class TankWarView extends SurfaceView implements Runnable {
 
             // defines speed of missile
             missile.y -= 100 * screenRatioY;
+
+            for(Alien alien : aliens) {
+                if (Rect.intersects(alien.getCollisionShape(), missile.getCollisionShape())) {
+                    alien.y = -500;
+                    missile.x = screenX + 500;
+                    alien.wasHit = true;
+                    score = score + 1;
+                }
+            }
         }
 
         for (Missile missile : trash)
             missiles.remove(missile);
+
+//         Alien Code
+        // tested - runs
+        for (Alien alien : aliens) {
+            // when this runs, the controlup button spawns on the tank and fucks it
+            alien.y += alien.speed;
+
+
+            // this is always running
+            if (alien.y + alien.height > 1600) {
+//                score = score + 12;
+
+//                if (!alien.wasHit) {
+//                    isTankHit = true;
+//                    return;
+//                }
+
+
+                int bound = (int) (90 * screenRatioY);
+                alien.speed = random.nextInt(bound);
+
+                if (alien.speed < 12 * screenRatioY) {
+                    alien.speed = (int) (12 * screenRatioY);
+                }
+
+                alien.y = 30;
+                alien.x = random.nextInt(screenX - alien.length);
+
+                alien.wasHit = false;
+            }
+
+//            if (Rect.intersects(alien.getCollisionShape(), tank.getCollisionShape())) {
+//                isTankHit = true;
+//                return;
+//            }
+        }
 
 
         CheckCollisions();
@@ -230,8 +297,14 @@ public class TankWarView extends SurfaceView implements Runnable {
 
         if (ourHolder.getSurface().isValid()) {
 
+            canvas = ourHolder.lockCanvas();
+
             shootButton = BitmapFactory.decodeResource(context.getResources(), R.drawable.testpng);
             shootButton = Bitmap.createScaledBitmap(shootButton, (int) (shootButtonLength), (int) (shootButtonHeight), false);
+
+            alienDog = BitmapFactory.decodeResource(context.getResources(), R.drawable.alien);
+            alienDog = Bitmap.createScaledBitmap(alienDog, (int) (controlButtonLength), (int) (controlButtonHeight), false);
+
 
             // control buttons
             controlUp = BitmapFactory.decodeResource(context.getResources(), R.drawable.controlup);
@@ -242,7 +315,7 @@ public class TankWarView extends SurfaceView implements Runnable {
             controlLeft = Bitmap.createScaledBitmap(controlLeft, (int) (controlButtonLength), (int) (controlButtonHeight), false);
             controlRight = BitmapFactory.decodeResource(context.getResources(), R.drawable.conrolright);
             controlRight = Bitmap.createScaledBitmap(controlRight, (int) (controlButtonLength), (int) (controlButtonHeight), false);
-            canvas = ourHolder.lockCanvas();
+
             canvas.drawBitmap(background1.background, background1.x, background1.y, paint);
             canvas.drawBitmap(background2.background, background2.x, background2.y, paint);
 
@@ -252,6 +325,25 @@ public class TankWarView extends SurfaceView implements Runnable {
             paint.setColor(Color.argb(255, 249, 129, 0));
             paint.setTextSize(40);
             canvas.drawText("Score: " + score + "   Lives: " + lives, 10, 50, paint);
+
+            //             isTankHit
+            if (isTankHit) {
+                lives--;
+                canvas.drawBitmap(tank.tankHit(), tank.x, tank.y, paint);
+                getHolder().unlockCanvasAndPost(canvas);
+                return;
+            }
+
+            int alienDogX = 600;
+            int alienDogY = 600;
+
+            for (Alien alien : aliens)
+                // Problem with the x and y
+                canvas.drawBitmap(alien.getAlien(), alien.x, alien.y, paint);
+
+
+//            canvas.drawBitmap(alienDog, alienDogX, alienDogY, paint);
+
 
             // control buttons
             canvas.drawBitmap(controlUp, controlUpX, controlUpY, paint);
@@ -269,6 +361,8 @@ public class TankWarView extends SurfaceView implements Runnable {
             for (Missile missile : missiles)
                 // draws the image for every missile fired, draws where the tank is
                 canvas.drawBitmap(missile.missile, missile.x, missile.y, paint);
+
+
 
             ourHolder.unlockCanvasAndPost(canvas);
 
