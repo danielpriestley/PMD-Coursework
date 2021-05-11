@@ -3,6 +3,7 @@ package com.example.tankwars2;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
@@ -22,6 +23,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+
 
 //import androidx.constraintlayout.widget.ConstraintSet;
 
@@ -71,9 +73,10 @@ public class TankWarView extends SurfaceView implements Runnable {
     // ALIENS
     private Alien[] aliens;
     private Random random;
+    private Random myRan;
     private Bitmap alienDog;
 
-
+    private MainActivity activity;
     private List<Missile> missiles;
 
     private Background background1, background2;
@@ -83,7 +86,7 @@ public class TankWarView extends SurfaceView implements Runnable {
     private Thread gameThread = null;
     private SurfaceHolder ourHolder;
     private volatile boolean playing;
-    private boolean paused = false;
+    private boolean paused = true;
     private Canvas canvas;
     private Paint paint;
     private long fps;
@@ -101,6 +104,8 @@ public class TankWarView extends SurfaceView implements Runnable {
         super(context);
         this.context = context;
 
+
+
         ourHolder = getHolder();
         paint = new Paint();
 
@@ -113,8 +118,12 @@ public class TankWarView extends SurfaceView implements Runnable {
         aliens = new Alien[7];
 //        aliens = new Alien();
         for (int i = 0; i < 7; i++) {
+            myRan = new Random();
+            int bound = (int) (1800);
+            int randX = myRan.nextInt(bound);
             Alien alien = new Alien(getResources());
             aliens[i] = alien;
+            aliens[i].x = randX;
         }
 
         random = new Random();
@@ -127,6 +136,10 @@ public class TankWarView extends SurfaceView implements Runnable {
         background2 = new Background(screenX, screenY, getResources());
 
         background2.y = screenY;
+
+        if (lives <= 0) {
+            // MAHER
+        }
 
 
         initLevel();
@@ -176,6 +189,7 @@ public class TankWarView extends SurfaceView implements Runnable {
         if (tank.x >= screenX - tank.getLength()) {
             tank.x = screenX - tank.getLength();
         }
+
 
         // missile collision code
 
@@ -251,7 +265,7 @@ public class TankWarView extends SurfaceView implements Runnable {
                 alien.speed = random.nextInt(bound);
 
                 if (alien.speed < 12 * screenRatioY) {
-                    alien.speed = (int) (12 * screenRatioY);
+                    alien.speed = (int) (50 * screenRatioY);
                 }
 
                 alien.y = 30;
@@ -260,10 +274,11 @@ public class TankWarView extends SurfaceView implements Runnable {
                 alien.wasHit = false;
             }
 
-//            if (Rect.intersects(alien.getCollisionShape(), tank.getCollisionShape())) {
-//                isTankHit = true;
-//                return;
-//            }
+            if (Rect.intersects(alien.getCollisionShape(), tank.getCollisionShape())) {
+                isTankHit = true;
+                reset();
+                return;
+            }
         }
 
 
@@ -326,19 +341,17 @@ public class TankWarView extends SurfaceView implements Runnable {
             paint.setTextSize(40);
             canvas.drawText("Score: " + score + "   Lives: " + lives, 10, 50, paint);
 
-            //             isTankHit
-            if (isTankHit) {
-                lives--;
-                canvas.drawBitmap(tank.tankHit(), tank.x, tank.y, paint);
-                getHolder().unlockCanvasAndPost(canvas);
-                return;
-            }
+
 
             int alienDogX = 600;
             int alienDogY = 600;
+//            int bound = (int) (150);
+//            int randX = random.nextInt(bound);
 
             for (Alien alien : aliens)
                 // Problem with the x and y
+
+
                 canvas.drawBitmap(alien.getAlien(), alien.x, alien.y, paint);
 
 
@@ -362,6 +375,13 @@ public class TankWarView extends SurfaceView implements Runnable {
                 // draws the image for every missile fired, draws where the tank is
                 canvas.drawBitmap(missile.missile, missile.x, missile.y, paint);
 
+            //             isTankHit
+            if (isTankHit) {
+                canvas.drawBitmap(tank.tankHit(), tank.x, tank.y, paint);
+                getHolder().unlockCanvasAndPost(canvas);
+                isTankHit = false;
+                return;
+            }
 
 
             ourHolder.unlockCanvasAndPost(canvas);
@@ -378,6 +398,7 @@ public class TankWarView extends SurfaceView implements Runnable {
 
     public void pause() {
         playing = false;
+//        paused = true;
         try {
             gameThread.join();
         } catch (InterruptedException e) {
@@ -389,8 +410,36 @@ public class TankWarView extends SurfaceView implements Runnable {
 
     public void resume() {
         playing = true;
+//        paused = false;
         gameThread = new Thread(this);
         gameThread.start();
+
+    }
+
+    public void reset() {
+        playing = false;
+        lives--;
+
+        try {
+            Thread.sleep(500);
+            for (Alien alien : aliens) {
+                alien.y = 0;
+                myRan = new Random();
+                int bound = (int) (700);
+                int randX = myRan.nextInt(bound);
+                alien.x = randX;
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+
+        resume();
+
+
+
+
     }
 
     @Override
@@ -401,6 +450,9 @@ public class TankWarView extends SurfaceView implements Runnable {
 
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
+
+                paused = false;
+
 
                 // if the finger tap is within the parameters of the shootButton
                 if (x > shootButtonX && x < shootButtonX + shootButtonLength &&
@@ -427,6 +479,8 @@ public class TankWarView extends SurfaceView implements Runnable {
                         y > controlUpY && y < controlUpY + controlButtonHeight) {
                     // tank moves up when button clicked
                     tank.setMovementState(tank.UP);
+
+
                 }
                 // DOWN BUTTON
                 if (x > controlDownX && x < controlDownX + controlButtonLength &&

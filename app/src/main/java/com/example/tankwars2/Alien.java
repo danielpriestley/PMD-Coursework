@@ -10,7 +10,7 @@ import static com.example.tankwars2.TankWarView.screenRatioX;
 import static com.example.tankwars2.TankWarView.screenRatioY;
 
 public class Alien {
-    public int speed = 1;
+    public int speed = 30;
     public boolean wasHit = true;
     int x = 500, y = 0, length, height, alienCounter = 1;
     Bitmap alien1, alien2, alien3, alien4, alien5, alien6, alien7;
@@ -84,6 +84,11 @@ public class Alien {
 
         alienCounter = 1;
 
+        return alien7;
+    }
+
+    Bitmap removeAlien () {
+        alienCounter = 1;
         return alien7;
     }
 

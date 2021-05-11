@@ -101,7 +101,7 @@ public class Tank {
         shoot4 = Bitmap.createScaledBitmap(shoot4, (int) length, (int) height, false);
         shoot5 = Bitmap.createScaledBitmap(shoot5, (int) length, (int) height, false);
 
-        tankHit = BitmapFactory.decodeResource(res, R.drawable.controlup);
+        tankHit = BitmapFactory.decodeResource(res, R.drawable.shoot5);
         tankHit = Bitmap.createScaledBitmap(tankHit, length, height, false );
 
 
