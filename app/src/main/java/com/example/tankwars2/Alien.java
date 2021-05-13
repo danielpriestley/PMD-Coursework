@@ -12,7 +12,7 @@ import static com.example.tankwars2.TankWarView.screenRatioY;
 public class Alien {
     public int speed = 30;
     public boolean wasHit = true;
-    int x = 500, y = 0, length, height, alienCounter = 1;
+    int x = 300, y = 0, length, height, alienCounter = 1;
     Bitmap alien1, alien2, alien3, alien4, alien5, alien6, alien7;
 
     Alien (Resources res) {
