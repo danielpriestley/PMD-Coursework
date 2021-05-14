@@ -55,7 +55,7 @@ public class Tank {
         rect = new RectF();
 
         length = screenX / 5;
-        height = screenY / 5;
+        height = screenX / 5;
 
         missileHeight = getHeight();
         missileWidth = getLength();
@@ -101,7 +101,7 @@ public class Tank {
         shoot4 = Bitmap.createScaledBitmap(shoot4, (int) length, (int) height, false);
         shoot5 = Bitmap.createScaledBitmap(shoot5, (int) length, (int) height, false);
 
-        tankHit = BitmapFactory.decodeResource(res, R.drawable.shoot5);
+        tankHit = BitmapFactory.decodeResource(res, R.drawable.tankdead);
         tankHit = Bitmap.createScaledBitmap(tankHit, length, height, false );
 
 
@@ -181,7 +181,7 @@ public class Tank {
     }
 
     Rect getCollisionShape () {
-        return new Rect((int) x, (int) y, (int) x + length, (int) y + height);
+        return new Rect((int) x, (int) y, (int) x + (length / 2), (int) y + (height / 2));
     }
 
     Bitmap tankHit () {

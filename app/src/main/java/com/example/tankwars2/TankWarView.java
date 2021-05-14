@@ -253,7 +253,7 @@ public class TankWarView extends SurfaceView implements Runnable {
                     missile.x = screenX + 1000;
                     missile.y = screenY - 1000;
                     alien.wasHit = true;
-                    score = score + 1;
+                    score = score + 10;
                 }
             }
         }

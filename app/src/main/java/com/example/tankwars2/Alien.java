@@ -32,8 +32,8 @@ public class Alien {
 //        length *= (int) screenRatioX;
 //        height *= (int) screenRatioY;
 
-        length = 150;
-        height = 150;
+        length = 200;
+        height = 200;
 
         alien1 = Bitmap.createScaledBitmap(alien1, length, height, false);
         alien2 = Bitmap.createScaledBitmap(alien2, length, height, false);
