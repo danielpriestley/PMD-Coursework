@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         Display display = getWindowManager().getDefaultDisplay();
-
+        this.getSupportActionBar().hide();
         Point size = new Point();
         display.getSize(size);
 

@@ -76,7 +76,7 @@ public class Tank {
                 (int) (height),
                 false);
 
-        bitmapup = BitmapFactory.decodeResource(res, R.drawable.shoot1);
+        bitmapup = BitmapFactory.decodeResource(res, R.drawable.tankup);
         bitmapup = Bitmap.createScaledBitmap(bitmapup, (int) (length), (int) (height), false);
 
 
@@ -104,8 +104,6 @@ public class Tank {
         tankHit = BitmapFactory.decodeResource(res, R.drawable.tankdead);
         tankHit = Bitmap.createScaledBitmap(tankHit, length, height, false );
 
-
-//        currentBitmap = getBitmap();
     }
 
     public void setMovementState(int state) {
@@ -124,7 +122,7 @@ public class Tank {
 
         } else if (tankMoving == UP) {
             y = y - tankSpeed / fps;
-            bitmap = bitmapdown;
+            bitmap = bitmapup;
         } else if (tankMoving == DOWN) {
             y = y + tankSpeed / fps;
             bitmap = bitmapdown;

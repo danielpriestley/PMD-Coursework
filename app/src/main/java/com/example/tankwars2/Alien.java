@@ -12,7 +12,7 @@ import static com.example.tankwars2.TankWarView.screenRatioY;
 public class Alien {
     public int speed = 30;
     public boolean wasHit = true;
-    int x = 300, y = 0, length, height, alienCounter = 1;
+    int x = 200, y = 0, length, height, alienCounter = 1;
     Bitmap alien1, alien2, alien3, alien4, alien5, alien6, alien7;
 
     Alien (Resources res) {
@@ -23,14 +23,6 @@ public class Alien {
         alien5 = BitmapFactory.decodeResource(res, R.drawable.alien);
         alien6 = BitmapFactory.decodeResource(res, R.drawable.alien);
         alien7 = BitmapFactory.decodeResource(res, R.drawable.alien);
-//        length = alien1.getWidth();
-//        height = alien1.getHeight();
-
-//        length /= 6;
-//        height /= 6;
-//
-//        length *= (int) screenRatioX;
-//        height *= (int) screenRatioY;
 
         length = 200;
         height = 200;
@@ -87,12 +79,7 @@ public class Alien {
         return alien7;
     }
 
-    Bitmap removeAlien () {
-        alienCounter = 1;
-        return alien7;
-    }
-
     Rect getCollisionShape () {
-        return new Rect(x, y, x + length, y + height);
+        return new Rect(x, y, x + 150, y + (height / 2));
     }
 }
